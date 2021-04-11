@@ -154,9 +154,10 @@ public class RCTAes extends ReactContextBaseJavaModule {
 
     private String shaX(String data, String algorithm) throws Exception {
         MessageDigest md = MessageDigest.getInstance(algorithm);
-        md.update(data.getBytes());
+        byte[] dataBytes = baseToBytes(data);
+        md.update(dataBytes);
         byte[] digest = md.digest();
-        return bytesToHex(digest);
+        return bytesToBase(digest);
     }
 
     public static String bytesToHex(byte[] bytes) {
