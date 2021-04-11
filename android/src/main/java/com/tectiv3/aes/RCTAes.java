@@ -170,13 +170,15 @@ public class RCTAes extends ReactContextBaseJavaModule {
         return new String(hexChars);
     }
 
-    private static String pbkdf2(String pwd, String salt, Integer cost, Integer length)
+    private static String pbkdf2(String input, String salt, Integer cost, Integer length)
     throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException
     {
         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA512Digest());
-        gen.init(pwd.getBytes("UTF_8"), salt.getBytes("UTF_8"), cost);
-        byte[] key = ((KeyParameter) gen.generateDerivedParameters(length)).getKey();
-        return bytesToHex(key);
+        byte[] inputBytes = baseToBytes(input);
+        byte[] saltBytes = baseToBytes(salt);
+        gen.init(inputBytes, saltBytes, cost);
+        byte[] keyBytes = ((KeyParameter) gen.generateDerivedParameters(length)).getKey();
+        return bytesToBase(keyBytes);
     }
 
     private static String hmacX(String text, String key, String algorithm)
@@ -192,7 +194,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     final static IvParameterSpec emptyIvSpec = new IvParameterSpec(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
-
     private static String encrypt(String text, String hexKey, String hexIv) throws Exception {
         if (text == null || text.length() == 0) {
             return null;
@@ -206,7 +207,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
         byte[] encrypted = cipher.doFinal(text.getBytes("UTF-8"));
         return Base64.encodeToString(encrypted, Base64.NO_WRAP);
     }
-
     private static String decrypt(String ciphertext, String hexKey, String hexIv) throws Exception {
         if(ciphertext == null || ciphertext.length() == 0) {
             return null;
