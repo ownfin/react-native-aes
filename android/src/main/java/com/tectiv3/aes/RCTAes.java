@@ -26,7 +26,6 @@ import javax.crypto.Mac;
 import org.spongycastle.crypto.digests.SHA512Digest;
 import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.util.encoders.Hex;
 
 import android.util.Base64;
 
@@ -160,17 +159,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
         return bytesToBase(digest);
     }
 
-    public static String bytesToHex(byte[] bytes) {
-        final char[] hexArray = "0123456789abcdef".toCharArray();
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
     private static String pbkdf2(String input, String salt, Integer cost, Integer length)
     throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException
     {
@@ -185,12 +173,12 @@ public class RCTAes extends ReactContextBaseJavaModule {
     private static String hmacX(String text, String key, String algorithm)
     throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException
     {
-        byte[] contentData = baseToBytes(text);
-        byte[] akHexData = baseToBytes(key);
+        byte[] contentBytes = baseToBytes(text);
+        byte[] keyBytes = baseToBytes(key);
         Mac sha_HMAC = Mac.getInstance(algorithm);
-        SecretKey secret_key = new SecretKeySpec(akHexData, algorithm);
+        SecretKey secret_key = new SecretKeySpec(keyBytes, algorithm);
         sha_HMAC.init(secret_key);
-        byte[] macBytes = sha_HMAC.doFinal(contentData);
+        byte[] macBytes = sha_HMAC.doFinal(contentBytes);
         return bytesToBase(macBytes);
     }
 
