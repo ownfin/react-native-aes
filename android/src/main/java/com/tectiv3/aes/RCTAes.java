@@ -63,7 +63,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
             promise.reject("-1", e.getMessage());
         }
     }
-
     @ReactMethod
     public void decrypt(String data, String pwd, String iv, Promise promise) {
         try {
@@ -93,22 +92,11 @@ public class RCTAes extends ReactContextBaseJavaModule {
             promise.reject("-1", e.getMessage());
         }
     }
-
     @ReactMethod
     public void hmac512(String data, String pwd, Promise promise) {
         try {
             String strs = hmacX(data, pwd, HMAC_SHA_512);
             promise.resolve(strs);
-        } catch (Exception e) {
-            promise.reject("-1", e.getMessage());
-        }
-    }
-
-    @ReactMethod
-    public void sha256(String data, Promise promise) {
-        try {
-            String result = shaX(data, "SHA-256");
-            promise.resolve(result);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
@@ -123,7 +111,15 @@ public class RCTAes extends ReactContextBaseJavaModule {
             promise.reject("-1", e.getMessage());
         }
     }
-
+    @ReactMethod
+    public void sha256(String data, Promise promise) {
+        try {
+            String result = shaX(data, "SHA-256");
+            promise.resolve(result);
+        } catch (Exception e) {
+            promise.reject("-1", e.getMessage());
+        }
+    }
     @ReactMethod
     public void sha512(String data, Promise promise) {
         try {
@@ -143,7 +139,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
             promise.reject("-1", e.getMessage());
         }
     }
-
     @ReactMethod
     public void randomKey(Integer length, Promise promise) {
         try {
@@ -187,12 +182,13 @@ public class RCTAes extends ReactContextBaseJavaModule {
     private static String hmacX(String text, String key, String algorithm)
     throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException
     {
-        byte[] contentData = text.getBytes("UTF_8");
-        byte[] akHexData = Hex.decode(key);
+        byte[] contentData = baseToBytes(text);
+        byte[] akHexData = baseToBytes(key);
         Mac sha_HMAC = Mac.getInstance(algorithm);
         SecretKey secret_key = new SecretKeySpec(akHexData, algorithm);
         sha_HMAC.init(secret_key);
-        return bytesToHex(sha_HMAC.doFinal(contentData));
+        byte[] macBytes = sha_HMAC.doFinal(contentData);
+        return bytesToBase(macBytes);
     }
 
     final static IvParameterSpec emptyIvSpec = new IvParameterSpec(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
@@ -223,6 +219,14 @@ public class RCTAes extends ReactContextBaseJavaModule {
         cipher.init(Cipher.DECRYPT_MODE, secretKey, hexIv == null ? emptyIvSpec : new IvParameterSpec(Hex.decode(hexIv)));
         byte[] decrypted = cipher.doFinal(Base64.decode(ciphertext, Base64.NO_WRAP));
         return new String(decrypted, "UTF-8");
+    }
+
+
+    public static String bytesToBase(byte[] bytes) {
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
+    public static byte[] baseToBytes(String base) {
+        return Base64.decode(base, Base64.DEFAULT);
     }
 
 }
