@@ -145,8 +145,8 @@ public class RCTAes extends ReactContextBaseJavaModule {
             byte[] key = new byte[length];
             SecureRandom rand = new SecureRandom();
             rand.nextBytes(key);
-            String keyHex = bytesToHex(key);
-            promise.resolve(keyHex);
+            String keyBase = bytesToBase(key);
+            promise.resolve(keyBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
