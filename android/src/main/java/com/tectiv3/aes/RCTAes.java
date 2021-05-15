@@ -37,6 +37,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 import com.ownfin.aes.crypto.AESCBC;
+import com.ownfin.aes.crypto.CSPRNG;
 
 public class RCTAes extends ReactContextBaseJavaModule {
 
@@ -138,13 +139,11 @@ public class RCTAes extends ReactContextBaseJavaModule {
         }
     }
     @ReactMethod
-    public void randomKey(Integer length, Promise promise) {
+    public void randomKey(Integer byteCount, Promise promise) {
         try {
-            byte[] key = new byte[length];
-            SecureRandom rand = new SecureRandom();
-            rand.nextBytes(key);
-            String keyBase = bytesToBase(key);
-            promise.resolve(keyBase);
+            byte[] randomBytes = CSPRNG.generate(byteCount);
+            String randomBase = bytesToBase(randomBytes);
+            promise.resolve(randomBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
