@@ -1,11 +1,37 @@
-declare module '@tectiv3/react-native-aes-crypto' {
-    function pbkdf2(password: string, salt: string, cost: number, length: number): Promise<string>;
-    function encrypt(text: string, key: string, iv: string): Promise<string>;
-    function decrypt(ciphertext: string, key: string, iv: string): Promise<string>;
-    function hmac256(ciphertext: string, key: string): Promise<string>;
-    function hmac512(ciphertext: string, key: string): Promise<string>;
-    function randomKey(length: number): Promise<string>;
-    function sha1(text: string): Promise<string>;
-    function sha256(text: string): Promise<string>;
-    function sha512(text: string): Promise<string>;
+declare module 'react-native-aes-crypto' {
+
+  function encrypt(
+    inputBase: string,
+    keyBase: string,
+    ivBase: string|null,
+  ): Promise<string>
+  function decrypt(
+    cipherBase: string,
+    keyBase: string,
+    ivBase: string,
+  ): Promise<string>
+
+  function pbkdf2(
+    inputBase: string,
+    saltBase: string,
+    iterations: number,
+    byteCount: number,
+  ): Promise<string>
+
+  function hmac256(
+    inputBase: string,
+    keyBase: string,
+  ): Promise<string>
+  function hmac512(
+    inputBase: string,
+    keyBase: string,
+  ): Promise<string>
+
+  function sha1(inputBase: string): Promise<string>
+  function sha256(inputBase: string): Promise<string>
+  function sha512(inputBase: string): Promise<string>
+
+  function randomUuid(): Promise<string>
+  function randomKey(byteCount: number): Promise<string>
+
 }
