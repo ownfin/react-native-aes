@@ -36,13 +36,12 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.ownfin.aes.crypto.AESCBC;
 
 public class RCTAes extends ReactContextBaseJavaModule {
 
-    private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
     public static final String HMAC_SHA_256 = "HmacSHA256";
     public static final String HMAC_SHA_512 = "HmacSHA512";
-    private static final String KEY_ALGORITHM = "AES";
 
     public RCTAes(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -56,7 +55,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
     @ReactMethod
     public void encrypt(String data, String key, String iv, Promise promise) {
         try {
-            String result = encrypt(data, key, iv);
+            String result = AESCBC.encrypt(data, key, iv);
             promise.resolve(result);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
@@ -65,7 +64,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
     @ReactMethod
     public void decrypt(String data, String pwd, String iv, Promise promise) {
         try {
-            String strs = decrypt(data, pwd, iv);
+            String strs = AESCBC.decrypt(data, pwd, iv);
             promise.resolve(strs);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
@@ -180,44 +179,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
         sha_HMAC.init(secret_key);
         byte[] macBytes = sha_HMAC.doFinal(contentBytes);
         return bytesToBase(macBytes);
-    }
-
-    final static IvParameterSpec emptyIvSpec = new IvParameterSpec(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
-    private static String encrypt(String inputBase, String keyBase, String ivBase) throws Exception {
-        if (inputBase == null || inputBase.length() == 0) {
-            return null;
-        }
-
-        byte[] inputBytes = baseToBytes(inputBase);
-        byte[] keyBytes = baseToBytes(keyBase);
-        SecretKey secretKey = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
-        IvParameterSpec ivSpec = emptyIvSpec;
-        if(ivBase != null){
-            byte[] ivBytes = baseToBytes(ivBase);
-            ivSpec = new IvParameterSpec(ivBytes);
-        }
-        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
-        byte[] cipherBytes = cipher.doFinal(inputBytes);
-        return bytesToBase(cipherBytes);
-    }
-    private static String decrypt(String cipherBase, String keyBase, String ivBase) throws Exception {
-        if(cipherBase == null || cipherBase.length() == 0) {
-            return null;
-        }
-
-        byte[] cipherBytes = baseToBytes(cipherBase);
-        byte[] keyBytes = baseToBytes(keyBase);
-        SecretKey secretKey = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
-        IvParameterSpec ivSpec = emptyIvSpec;
-        if(ivBase != null){
-            byte[] ivBytes = baseToBytes(ivBase);
-            ivSpec = new IvParameterSpec(ivBytes);
-        }
-        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
-        byte[] plainBytes = cipher.doFinal(cipherBytes);
-        return bytesToBase(plainBytes);
     }
 
 
