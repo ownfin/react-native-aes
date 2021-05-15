@@ -17,14 +17,14 @@ import org.spongycastle.crypto.digests.SHA512Digest;
 import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.spongycastle.crypto.params.KeyParameter;
 
-import android.util.Base64;
-
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+
 import com.ownfin.aes.crypto.AESCBC;
 import com.ownfin.aes.crypto.CSPRNG;
+import com.ownfin.aes.encoding.Base64;
 
 public class RCTAes extends ReactContextBaseJavaModule {
 
@@ -41,19 +41,30 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void encrypt(String data, String key, String iv, Promise promise) {
+    public void encrypt(String inputBase, String keyBase, String ivBase, Promise promise) {
         try {
-            String result = AESCBC.encrypt(data, key, iv);
-            promise.resolve(result);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] keyBytes = Base64.toBytes(keyBase);
+            byte[] ivBytes = null;
+            if(ivBase != null && ivBase.length() > 0){
+                ivBytes = Base64.toBytes(ivBase);
+            }
+            byte[] resultBytes = AESCBC.encrypt(inputBytes, keyBytes, ivBytes);
+            String resultBase = Base64.toString(resultBytes);
+            promise.resolve(resultBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
     }
     @ReactMethod
-    public void decrypt(String data, String pwd, String iv, Promise promise) {
+    public void decrypt(String cipherBase, String keyBase, String ivBase, Promise promise) {
         try {
-            String strs = AESCBC.decrypt(data, pwd, iv);
-            promise.resolve(strs);
+            byte[] cipherBytes = Base64.toBytes(cipherBase);
+            byte[] keyBytes = Base64.toBytes(keyBase);
+            byte[] ivBytes = Base64.toBytes(ivBase);
+            byte[] plainBytes = AESCBC.encrypt(cipherBytes, keyBytes, ivBytes);
+            String plainBase = Base64.toString(plainBytes);
+            promise.resolve(plainBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
@@ -129,7 +140,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
     public void randomKey(Integer byteCount, Promise promise) {
         try {
             byte[] randomBytes = CSPRNG.generate(byteCount);
-            String randomBase = bytesToBase(randomBytes);
+            String randomBase = Base64.toString(randomBytes);
             promise.resolve(randomBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
@@ -138,41 +149,33 @@ public class RCTAes extends ReactContextBaseJavaModule {
 
     private String shaX(String data, String algorithm) throws Exception {
         MessageDigest md = MessageDigest.getInstance(algorithm);
-        byte[] dataBytes = baseToBytes(data);
+        byte[] dataBytes = Base64.toBytes(data);
         md.update(dataBytes);
         byte[] digest = md.digest();
-        return bytesToBase(digest);
+        return Base64.toString(digest);
     }
 
     private static String pbkdf2(String input, String salt, Integer cost, Integer length)
     throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException
     {
         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA512Digest());
-        byte[] inputBytes = baseToBytes(input);
-        byte[] saltBytes = baseToBytes(salt);
+        byte[] inputBytes = Base64.toBytes(input);
+        byte[] saltBytes = Base64.toBytes(salt);
         gen.init(inputBytes, saltBytes, cost);
         byte[] keyBytes = ((KeyParameter) gen.generateDerivedParameters(length)).getKey();
-        return bytesToBase(keyBytes);
+        return Base64.toString(keyBytes);
     }
 
     private static String hmacX(String text, String key, String algorithm)
     throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException
     {
-        byte[] contentBytes = baseToBytes(text);
-        byte[] keyBytes = baseToBytes(key);
+        byte[] contentBytes = Base64.toBytes(text);
+        byte[] keyBytes = Base64.toBytes(key);
         Mac sha_HMAC = Mac.getInstance(algorithm);
         SecretKey secret_key = new SecretKeySpec(keyBytes, algorithm);
         sha_HMAC.init(secret_key);
         byte[] macBytes = sha_HMAC.doFinal(contentBytes);
-        return bytesToBase(macBytes);
-    }
-
-
-    public static String bytesToBase(byte[] bytes) {
-        return Base64.encodeToString(bytes, Base64.NO_WRAP);
-    }
-    public static byte[] baseToBytes(String base) {
-        return Base64.decode(base, Base64.NO_WRAP);
+        return Base64.toString(macBytes);
     }
 
 }
