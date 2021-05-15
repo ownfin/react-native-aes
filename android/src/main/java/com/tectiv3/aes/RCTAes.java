@@ -24,6 +24,7 @@ import com.facebook.react.bridge.ReactMethod;
 
 import com.ownfin.aes.crypto.AESCBC;
 import com.ownfin.aes.crypto.CSPRNG;
+import com.ownfin.aes.crypto.PBKDF2;
 import com.ownfin.aes.encoding.Base64;
 
 public class RCTAes extends ReactContextBaseJavaModule {
@@ -71,10 +72,13 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void pbkdf2(String pwd, String salt, Integer cost, Integer length, Promise promise) {
+    public void pbkdf2(String inputBase, String saltBase, Integer iterations, Integer byteCount, Promise promise) {
         try {
-            String strs = pbkdf2(pwd, salt, cost, length);
-            promise.resolve(strs);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] saltBytes = Base64.toBytes(saltBase);
+            byte[] keyBytes = PBKDF2.derive(inputBytes, saltBytes, iterations, byteCount);
+            String keyBase = Base64.toString(keyBytes);
+            promise.resolve(keyBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
@@ -153,17 +157,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
         md.update(dataBytes);
         byte[] digest = md.digest();
         return Base64.toString(digest);
-    }
-
-    private static String pbkdf2(String input, String salt, Integer cost, Integer length)
-    throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException
-    {
-        PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA512Digest());
-        byte[] inputBytes = Base64.toBytes(input);
-        byte[] saltBytes = Base64.toBytes(salt);
-        gen.init(inputBytes, saltBytes, cost);
-        byte[] keyBytes = ((KeyParameter) gen.generateDerivedParameters(length)).getKey();
-        return Base64.toString(keyBytes);
     }
 
     private static String hmacX(String text, String key, String algorithm)
