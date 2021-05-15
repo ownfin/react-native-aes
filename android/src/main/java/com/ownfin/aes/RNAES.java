@@ -1,4 +1,4 @@
-package com.tectiv3.aes;
+package com.ownfin.aes;
 
 import java.util.UUID;
 
@@ -14,15 +14,15 @@ import com.ownfin.aes.crypto.PBKDF2;
 import com.ownfin.aes.crypto.SHA;
 import com.ownfin.aes.encoding.Base64;
 
-public class RCTAes extends ReactContextBaseJavaModule {
+public class RNAES extends ReactContextBaseJavaModule {
 
-    public RCTAes(ReactApplicationContext reactContext) {
+    public RNAES(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     @Override
     public String getName() {
-        return "RCTAes";
+        return "RNAES";
     }
 
     @ReactMethod
