@@ -1,21 +1,6 @@
 package com.tectiv3.aes;
 
-import java.io.UnsupportedEncodingException;
-
 import java.util.UUID;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.InvalidKeyException;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.Mac;
-
-import org.spongycastle.crypto.digests.SHA512Digest;
-import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
-import org.spongycastle.crypto.params.KeyParameter;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.Promise;
@@ -145,8 +130,8 @@ public class RCTAes extends ReactContextBaseJavaModule {
     @ReactMethod
     public void randomUuid(Promise promise) {
         try {
-            String result = UUID.randomUUID().toString();
-            promise.resolve(result);
+            String uuidString = UUID.randomUUID().toString();
+            promise.resolve(uuidString);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
