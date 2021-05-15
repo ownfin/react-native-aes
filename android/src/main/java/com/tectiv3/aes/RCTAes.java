@@ -26,6 +26,7 @@ import com.ownfin.aes.crypto.AESCBC;
 import com.ownfin.aes.crypto.CSPRNG;
 import com.ownfin.aes.crypto.HMAC;
 import com.ownfin.aes.crypto.PBKDF2;
+import com.ownfin.aes.crypto.SHA;
 import com.ownfin.aes.encoding.Base64;
 
 public class RCTAes extends ReactContextBaseJavaModule {
@@ -108,28 +109,34 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void sha1(String data, Promise promise) {
+    public void sha1(String inputBase, Promise promise) {
         try {
-            String result = shaX(data, "SHA-1");
-            promise.resolve(result);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] hashBytes = SHA.SHA1.hash(inputBytes);
+            String hashBase = Base64.toString(hashBytes);
+            promise.resolve(hashBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
     }
     @ReactMethod
-    public void sha256(String data, Promise promise) {
+    public void sha256(String inputBase, Promise promise) {
         try {
-            String result = shaX(data, "SHA-256");
-            promise.resolve(result);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] hashBytes = SHA.SHA256.hash(inputBytes);
+            String hashBase = Base64.toString(hashBytes);
+            promise.resolve(hashBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
     }
     @ReactMethod
-    public void sha512(String data, Promise promise) {
+    public void sha512(String inputBase, Promise promise) {
         try {
-            String result = shaX(data, "SHA-512");
-            promise.resolve(result);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] hashBytes = SHA.SHA512.hash(inputBytes);
+            String hashBase = Base64.toString(hashBytes);
+            promise.resolve(hashBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
@@ -153,14 +160,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
-    }
-
-    private String shaX(String data, String algorithm) throws Exception {
-        MessageDigest md = MessageDigest.getInstance(algorithm);
-        byte[] dataBytes = Base64.toBytes(data);
-        md.update(dataBytes);
-        byte[] digest = md.digest();
-        return Base64.toString(digest);
     }
 
 }
