@@ -24,13 +24,11 @@ import com.facebook.react.bridge.ReactMethod;
 
 import com.ownfin.aes.crypto.AESCBC;
 import com.ownfin.aes.crypto.CSPRNG;
+import com.ownfin.aes.crypto.HMAC;
 import com.ownfin.aes.crypto.PBKDF2;
 import com.ownfin.aes.encoding.Base64;
 
 public class RCTAes extends ReactContextBaseJavaModule {
-
-    public static final String HMAC_SHA_256 = "HmacSHA256";
-    public static final String HMAC_SHA_512 = "HmacSHA512";
 
     public RCTAes(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -85,19 +83,25 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void hmac256(String data, String pwd, Promise promise) {
+    public void hmac256(String inputBase, String keyBase, Promise promise) {
         try {
-            String strs = hmacX(data, pwd, HMAC_SHA_256);
-            promise.resolve(strs);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] keyBytes = Base64.toBytes(keyBase);
+            byte[] macBytes = HMAC.HMAC256.hash(inputBytes, keyBytes);
+            String macBase = Base64.toString(macBytes);
+            promise.resolve(macBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
     }
     @ReactMethod
-    public void hmac512(String data, String pwd, Promise promise) {
+    public void hmac512(String inputBase, String keyBase, Promise promise) {
         try {
-            String strs = hmacX(data, pwd, HMAC_SHA_512);
-            promise.resolve(strs);
+            byte[] inputBytes = Base64.toBytes(inputBase);
+            byte[] keyBytes = Base64.toBytes(keyBase);
+            byte[] macBytes = HMAC.HMAC512.hash(inputBytes, keyBytes);
+            String macBase = Base64.toString(macBytes);
+            promise.resolve(macBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
@@ -157,18 +161,6 @@ public class RCTAes extends ReactContextBaseJavaModule {
         md.update(dataBytes);
         byte[] digest = md.digest();
         return Base64.toString(digest);
-    }
-
-    private static String hmacX(String text, String key, String algorithm)
-    throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException
-    {
-        byte[] contentBytes = Base64.toBytes(text);
-        byte[] keyBytes = Base64.toBytes(key);
-        Mac sha_HMAC = Mac.getInstance(algorithm);
-        SecretKey secret_key = new SecretKeySpec(keyBytes, algorithm);
-        sha_HMAC.init(secret_key);
-        byte[] macBytes = sha_HMAC.doFinal(contentBytes);
-        return Base64.toString(macBytes);
     }
 
 }
