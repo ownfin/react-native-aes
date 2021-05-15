@@ -13,32 +13,19 @@
 
 @implementation AesCrypt
 
-+ (NSString *) toHex:(NSData *)nsdata {
-    const unsigned char *bytes = (const unsigned char *)nsdata.bytes;
-    NSMutableString *hex = [NSMutableString new];
-    for (NSInteger i = 0; i < nsdata.length; i++) {
-        [hex appendFormat:@"%02x", bytes[i]];
-    }
-    return [hex copy];
++ (NSString *) bytesToBase:(NSData *)inputData {
+    NSString *base64Encoded = [inputData base64EncodedStringWithOptions:0];
+    return base64Encoded;
+}
++ (NSData *) baseToBytes: (NSString *)inputBase {
+    NSData *base64Decoded = [[NSData alloc] initWithBase64EncodedString:inputBase options:0];;
+    return base64Decoded;
 }
 
-+ (NSData *) fromHex: (NSString *)string {
-    NSMutableData *data = [[NSMutableData alloc] init];
-    unsigned char whole_byte;
-    char byte_chars[3] = {'\0','\0','\0'};
-    for (int i = 0; i < ([string length] / 2); i++) {
-        byte_chars[0] = [string characterAtIndex:i*2];
-        byte_chars[1] = [string characterAtIndex:i*2+1];
-        whole_byte = strtol(byte_chars, NULL, 16);
-        [data appendBytes:&whole_byte length:1];
-    }
-    return data;
-}
-
-+ (NSString *) pbkdf2:(NSString *)password salt: (NSString *)salt cost: (NSInteger)cost length: (NSInteger)length {
++ (NSString *) pbkdf2:(NSString *)input salt: (NSString *)salt cost: (NSInteger)cost length: (NSInteger)length {
     // Data of String to generate Hash key(hexa decimal string).
-    NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *saltData = [salt dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *inputData = [self baseToBytes:input];
+    NSData *saltData = [self baseToBytes:salt];
 
     // Hash key (hexa decimal) string data length.
     NSMutableData *hashKeyData = [NSMutableData dataWithLength:length/8];
@@ -46,12 +33,12 @@
     // Key Derivation using PBKDF2 algorithm.
     int status = CCKeyDerivationPBKDF(
                     kCCPBKDF2,
-                    passwordData.bytes,
-                    passwordData.length,
+                    inputData.bytes,
+                    inputData.length,
                     saltData.bytes,
                     saltData.length,
                     kCCPRFHmacAlgSHA512,
-                    cost,
+                    (int)cost,
                     hashKeyData.mutableBytes,
                     hashKeyData.length);
 
@@ -60,17 +47,17 @@
         return @"";
     }
 
-    return [self toHex:hashKeyData];
+    return [self bytesToBase:hashKeyData];
 }
 
-+ (NSData *) AES256CBC: (NSString *)operation data: (NSData *)data key: (NSString *)key iv: (NSString *)iv {
-    //convert hex string to hex data
-    NSData *keyData = [self fromHex:key];
-    NSData *ivData = [self fromHex:iv];
-    //    NSData *keyData = [key dataUsingEncoding:NSUTF8StringEncoding];
++ (NSData *) AES256CBC: (NSString *)operation inputBase: (NSString *)inputBase keyBase: (NSString *)keyBase iv: (NSString *)iv {
+    //convert base64 string to hex data
+    NSData *inputData = [self baseToBytes:inputBase];
+    NSData *keyData = [self baseToBytes:keyBase];
+    NSData *ivData = [self baseToBytes:iv];
+    
     size_t numBytes = 0;
-
-    NSMutableData * buffer = [[NSMutableData alloc] initWithLength:[data length] + kCCBlockSizeAES128];
+    NSMutableData * buffer = [[NSMutableData alloc] initWithLength:[inputData length] + kCCBlockSizeAES128];
 
     CCCryptorStatus cryptStatus = CCCrypt(
                                           [operation isEqualToString:@"encrypt"] ? kCCEncrypt : kCCDecrypt,
@@ -78,7 +65,7 @@
                                           kCCOptionPKCS7Padding,
                                           keyData.bytes, kCCKeySizeAES256,
                                           ivData.length ? ivData.bytes : nil,
-                                          data.bytes, data.length,
+                                          inputData.bytes, inputData.length,
                                           buffer.mutableBytes,  buffer.length,
                                           &numBytes);
 
@@ -90,55 +77,55 @@
     return nil;
 }
 
-+ (NSString *) encrypt: (NSString *)clearText key: (NSString *)key iv: (NSString *)iv {
-    NSData *result = [self AES256CBC:@"encrypt" data:[clearText dataUsingEncoding:NSUTF8StringEncoding] key:key iv:iv];
-    return [result base64EncodedStringWithOptions:0];
++ (NSString *) encrypt: (NSString *)inputBase key: (NSString *)keyBase iv: (NSString *)iv {
+    NSData *result = [self AES256CBC:@"encrypt" inputBase:inputBase keyBase:keyBase iv:iv];
+    return [self bytesToBase:result];
+}
++ (NSString *) decrypt: (NSString *)inputBase key: (NSString *)keyBase iv: (NSString *)iv {
+    NSData *result = [self AES256CBC:@"decrypt" inputBase:inputBase keyBase:keyBase iv:iv];
+    return [self bytesToBase:result];
 }
 
-+ (NSString *) decrypt: (NSString *)cipherText key: (NSString *)key iv: (NSString *)iv {
-    NSData *result = [self AES256CBC:@"decrypt" data:[[NSData alloc] initWithBase64EncodedString:cipherText options:0] key:key iv:iv];
-    return [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
-}
-
-+ (NSString *) hmac256: (NSString *)input key: (NSString *)key {
-    NSData *keyData = [self fromHex:key];
-    NSData* inputData = [input dataUsingEncoding:NSUTF8StringEncoding];
++ (NSString *) hmac256: (NSString *)inputBase key: (NSString *)keyBase {
+    NSData *inputData = [self baseToBytes:inputBase];
+    NSData *keyData = [self baseToBytes:keyBase];
+    
     void* buffer = malloc(CC_SHA256_DIGEST_LENGTH);
     CCHmac(kCCHmacAlgSHA256, [keyData bytes], [keyData length], [inputData bytes], [inputData length], buffer);
     NSData *nsdata = [NSData dataWithBytesNoCopy:buffer length:CC_SHA256_DIGEST_LENGTH freeWhenDone:YES];
-    return [self toHex:nsdata];
+    return [self bytesToBase:nsdata];
 }
-
-+ (NSString *) hmac512: (NSString *)input key: (NSString *)key {
-    NSData *keyData = [self fromHex:key];
-    NSData* inputData = [input dataUsingEncoding:NSUTF8StringEncoding];
++ (NSString *) hmac512: (NSString *)inputBase key: (NSString *)keyBase {
+    NSData *inputData = [self baseToBytes:inputBase];
+    NSData *keyData = [self baseToBytes:keyBase];
+    
     void* buffer = malloc(CC_SHA512_DIGEST_LENGTH);
     CCHmac(kCCHmacAlgSHA512, [keyData bytes], [keyData length], [inputData bytes], [inputData length], buffer);
     NSData *nsdata = [NSData dataWithBytesNoCopy:buffer length:CC_SHA512_DIGEST_LENGTH freeWhenDone:YES];
-    return [self toHex:nsdata];
+    return [self bytesToBase:nsdata];
 }
 
-+ (NSString *) sha1: (NSString *)input {
-    NSData* inputData = [input dataUsingEncoding:NSUTF8StringEncoding];
++ (NSString *) sha1: (NSString *)inputBase {
+    NSData* inputData = [self baseToBytes:inputBase];
     NSMutableData *result = [[NSMutableData alloc] initWithLength:CC_SHA1_DIGEST_LENGTH];
     CC_SHA1([inputData bytes], (CC_LONG)[inputData length], result.mutableBytes);
-    return [self toHex:result];
+    return [self bytesToBase:result];
 }
 
-+ (NSString *) sha256: (NSString *)input {
-    NSData* inputData = [input dataUsingEncoding:NSUTF8StringEncoding];
++ (NSString *) sha256: (NSString *)inputBase {
+    NSData* inputData = [self baseToBytes:inputBase];
     unsigned char* buffer = malloc(CC_SHA256_DIGEST_LENGTH);
     CC_SHA256([inputData bytes], (CC_LONG)[inputData length], buffer);
     NSData *result = [NSData dataWithBytesNoCopy:buffer length:CC_SHA256_DIGEST_LENGTH freeWhenDone:YES];
-    return [self toHex:result];
+    return [self bytesToBase:result];
 }
 
-+ (NSString *) sha512: (NSString *)input {
-    NSData* inputData = [input dataUsingEncoding:NSUTF8StringEncoding];
++ (NSString *) sha512: (NSString *)inputBase {
+    NSData* inputData = [self baseToBytes:inputBase];
     unsigned char* buffer = malloc(CC_SHA512_DIGEST_LENGTH);
     CC_SHA512([inputData bytes], (CC_LONG)[inputData length], buffer);
     NSData *result = [NSData dataWithBytesNoCopy:buffer length:CC_SHA512_DIGEST_LENGTH freeWhenDone:YES];
-    return [self toHex:result];
+    return [self bytesToBase:result];
 }
 
 + (NSString *) randomUuid {
@@ -151,7 +138,7 @@
     if (result != noErr) {
         return nil;
     }
-    return [self toHex:data];
+    return [self bytesToBase:data];
 }
 
 @end

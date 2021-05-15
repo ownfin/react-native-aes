@@ -16,7 +16,6 @@
 + (NSString *) sha1: (NSString *)input;
 + (NSString *) sha256: (NSString *)input;
 + (NSString *) sha512: (NSString *)input;
-+ (NSString *) toHex: (NSData *)nsdata;
 + (NSString *) randomUuid;
 + (NSString *) randomKey: (NSInteger)length;
 @end
