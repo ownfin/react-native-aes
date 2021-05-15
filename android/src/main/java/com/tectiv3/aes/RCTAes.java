@@ -26,7 +26,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void encrypt(String inputBase, String keyBase, String ivBase, Promise promise) {
+    public void aesEncrypt(String inputBase, String ivBase, String keyBase, Promise promise) {
         try {
             byte[] inputBytes = Base64.toBytes(inputBase);
             byte[] keyBytes = Base64.toBytes(keyBase);
@@ -42,11 +42,11 @@ public class RCTAes extends ReactContextBaseJavaModule {
         }
     }
     @ReactMethod
-    public void decrypt(String cipherBase, String keyBase, String ivBase, Promise promise) {
+    public void aesDecrypt(String cipherBase, String ivBase, String keyBase, Promise promise) {
         try {
             byte[] cipherBytes = Base64.toBytes(cipherBase);
-            byte[] keyBytes = Base64.toBytes(keyBase);
             byte[] ivBytes = Base64.toBytes(ivBase);
+            byte[] keyBytes = Base64.toBytes(keyBase);
             byte[] plainBytes = AESCBC.decrypt(cipherBytes, keyBytes, ivBytes);
             String plainBase = Base64.toString(plainBytes);
             promise.resolve(plainBase);
@@ -128,20 +128,20 @@ public class RCTAes extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void randomUuid(Promise promise) {
+    public void csprng(Integer byteCount, Promise promise) {
         try {
-            String uuidString = UUID.randomUUID().toString();
-            promise.resolve(uuidString);
+            byte[] randomBytes = CSPRNG.generate(byteCount);
+            String randomBase = Base64.toString(randomBytes);
+            promise.resolve(randomBase);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }
     }
     @ReactMethod
-    public void randomKey(Integer byteCount, Promise promise) {
+    public void uuid(Promise promise) {
         try {
-            byte[] randomBytes = CSPRNG.generate(byteCount);
-            String randomBase = Base64.toString(randomBytes);
-            promise.resolve(randomBase);
+            String uuidString = UUID.randomUUID().toString();
+            promise.resolve(uuidString);
         } catch (Exception e) {
             promise.reject("-1", e.getMessage());
         }

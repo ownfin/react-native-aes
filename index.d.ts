@@ -1,14 +1,14 @@
 declare module 'react-native-aes-crypto' {
 
-  function encrypt(
+  function aesEncrypt(
     inputBase: string,
-    keyBase: string,
     ivBase: string|null,
-  ): Promise<string>
-  function decrypt(
-    cipherBase: string,
     keyBase: string,
+  ): Promise<string>
+  function aesDecrypt(
+    cipherBase: string,
     ivBase: string,
+    keyBase: string,
   ): Promise<string>
 
   function pbkdf2(
@@ -31,7 +31,7 @@ declare module 'react-native-aes-crypto' {
   function sha256(inputBase: string): Promise<string>
   function sha512(inputBase: string): Promise<string>
 
-  function randomUuid(): Promise<string>
-  function randomKey(byteCount: number): Promise<string>
+  function csprng(byteCount: number): Promise<string>
+  function uuid(): Promise<string>
 
 }
