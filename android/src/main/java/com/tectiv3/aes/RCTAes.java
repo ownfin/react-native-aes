@@ -63,7 +63,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
             byte[] cipherBytes = Base64.toBytes(cipherBase);
             byte[] keyBytes = Base64.toBytes(keyBase);
             byte[] ivBytes = Base64.toBytes(ivBase);
-            byte[] plainBytes = AESCBC.encrypt(cipherBytes, keyBytes, ivBytes);
+            byte[] plainBytes = AESCBC.decrypt(cipherBytes, keyBytes, ivBytes);
             String plainBase = Base64.toString(plainBytes);
             promise.resolve(plainBase);
         } catch (Exception e) {
