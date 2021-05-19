@@ -8,6 +8,7 @@
 #import <CommonCrypto/CommonCryptor.h>
 
 #import "AESCBC.h"
+#import "CSPRNG.h"
 
 @implementation AESCBC
 
@@ -33,7 +34,16 @@
 }
 
 + (NSData *) encrypt: (NSData *)inputBytes :(NSData *)keyBytes :(NSData *)ivBytes {
-    return [self perform:kCCEncrypt :inputBytes :keyBytes :ivBytes];
+    if(ivBytes == nil){
+        ivBytes = [CSPRNG generate:IV_BYTE_COUNT];
+    }
+    NSData *resultBytes = [self perform:kCCEncrypt :inputBytes :keyBytes :ivBytes];
+    if(resultBytes != nil){
+        NSMutableData *outputBytes = [ivBytes mutableCopy];
+        [outputBytes appendData:resultBytes];
+        return outputBytes;
+    }
+    return nil;
 }
 + (NSData *) decrypt: (NSData *)cipherBytes :(NSData *)keyBytes :(NSData *)ivBytes {
     return [self perform:kCCDecrypt :cipherBytes :keyBytes :ivBytes];
