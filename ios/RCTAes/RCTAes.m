@@ -4,37 +4,48 @@
 //
 //  Created by tectiv3 on 10/02/17.
 //  Copyright (c) 2017 tectiv3. All rights reserved.
+//  Copyright (c) 2021 ownfin. All rights reserved.
 //
 
 
 #import "RCTAes.h"
 #import "AesCrypt.h"
+#import "AESCBC.h"
+#import "Base64.h"
 
 @implementation RCTAes
 
-RCT_EXPORT_MODULE()
+RCT_EXPORT_MODULE(RNAES)
 
-RCT_EXPORT_METHOD(encrypt:(NSString *)data key:(NSString *)key iv:(NSString *)iv
+RCT_EXPORT_METHOD(aesEncrypt:(NSString *)inputBase :(NSString *)ivBase :(NSString *)keyBase
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     NSError *error = nil;
-    NSString *base64 = [AesCrypt encrypt:data key:key iv:iv];
-    if (base64 == nil) {
+    NSData *inputBytes = [Base64 toBytes:inputBase];
+    NSData *keyBytes = [Base64 toBytes:keyBase];
+    NSData *ivBytes = [Base64 toBytes:ivBase];
+    NSData *resultBytes = [AESCBC encrypt:inputBytes :keyBytes :ivBytes];
+    if (resultBytes == nil) {
         reject(@"encrypt_fail", @"Encrypt error", error);
     } else {
-        resolve(base64);
+        NSString *resultBase = [Base64 toString:resultBytes];
+        resolve(resultBase);
     }
 }
 
-RCT_EXPORT_METHOD(decrypt:(NSString *)base64 key:(NSString *)key iv:(NSString *)iv
+RCT_EXPORT_METHOD(aesDecrypt:(NSString *)cipherBase :(NSString *)ivBase :(NSString *)keyBase
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     NSError *error = nil;
-    NSString *data = [AesCrypt decrypt:base64 key:key iv:iv];
-    if (data == nil) {
+    NSData *cipherBytes = [Base64 toBytes:cipherBase];
+    NSData *keyBytes = [Base64 toBytes:keyBase];
+    NSData *ivBytes = [Base64 toBytes:ivBase];
+    NSData *resultBytes = [AESCBC decrypt:cipherBytes :keyBytes :ivBytes];
+    if (ivBytes == nil) {
         reject(@"decrypt_fail", @"Decrypt failed", error);
     } else {
-        resolve(data);
+        NSString *resultBase = [Base64 toString:resultBytes];
+        resolve(resultBase);
     }
 }
 
@@ -111,7 +122,7 @@ RCT_EXPORT_METHOD(sha512:(NSString *)text
     }
 }
 
-RCT_EXPORT_METHOD(randomUuid:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(uuid:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     NSError *error = nil;
     NSString *data = [AesCrypt randomUuid];
@@ -122,7 +133,7 @@ RCT_EXPORT_METHOD(randomUuid:(RCTPromiseResolveBlock)resolve
     }
 }
 
-RCT_EXPORT_METHOD(randomKey:(NSInteger)length
+RCT_EXPORT_METHOD(csprng:(NSInteger)length
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     NSError *error = nil;
