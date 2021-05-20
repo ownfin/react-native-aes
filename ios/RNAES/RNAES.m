@@ -8,8 +8,7 @@
 //
 
 
-#import "RCTAes.h"
-#import "AesCrypt.h"
+#import "RNAES.h"
 
 #import "AESCBC.h"
 #import "Base64.h"
@@ -18,9 +17,9 @@
 #import "PBKDF2.h"
 #import "SHA.h"
 
-@implementation RCTAes
+@implementation RNAES
 
-RCT_EXPORT_MODULE(RNAES)
+RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(aesEncrypt:(NSString *)inputBase :(NSString *)ivBase :(NSString *)keyBase
                   resolver:(RCTPromiseResolveBlock)resolve
