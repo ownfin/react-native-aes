@@ -12,7 +12,7 @@
 
 @implementation AESCBC
 
-+ (NSData *) perform: (UInt32)operation :(NSData *)inputBytes :(NSData *)keyBytes :(NSData *)ivBytes {
++ (NSData *) perform: (UInt32)operation :(NSData *)inputBytes :(NSData *)ivBytes :(NSData *)keyBytes {
     size_t outputByteCount = 0;
     size_t bufferByteCount = [inputBytes length] + kCCBlockSizeAES128;
     NSMutableData * resultBytes = [[NSMutableData alloc] initWithLength:bufferByteCount];
@@ -32,11 +32,11 @@
     return nil;
 }
 
-+ (NSData *) encrypt: (NSData *)inputBytes :(NSData *)keyBytes :(NSData *)ivBytes {
++ (NSData *) encrypt: (NSData *)inputBytes :(NSData *)ivBytes :(NSData *)keyBytes {
     if(ivBytes == nil){
         ivBytes = [CSPRNG generate:IV_BYTE_COUNT];
     }
-    NSData *resultBytes = [self perform:kCCEncrypt :inputBytes :keyBytes :ivBytes];
+    NSData *resultBytes = [self perform:kCCEncrypt :inputBytes :ivBytes :keyBytes];
     if(resultBytes != nil){
         NSMutableData *outputBytes = [ivBytes mutableCopy];
         [outputBytes appendData:resultBytes];
@@ -44,8 +44,8 @@
     }
     return nil;
 }
-+ (NSData *) decrypt: (NSData *)cipherBytes :(NSData *)keyBytes :(NSData *)ivBytes {
-    return [self perform:kCCDecrypt :cipherBytes :keyBytes :ivBytes];
++ (NSData *) decrypt: (NSData *)cipherBytes :(NSData *)ivBytes :(NSData *)keyBytes {
+    return [self perform:kCCDecrypt :cipherBytes :ivBytes :keyBytes];
 }
 
 @end

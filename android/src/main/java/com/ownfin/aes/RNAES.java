@@ -29,12 +29,12 @@ public class RNAES extends ReactContextBaseJavaModule {
     public void aesEncrypt(String inputBase, String ivBase, String keyBase, Promise promise) {
         try {
             byte[] inputBytes = Base64.toBytes(inputBase);
-            byte[] keyBytes = Base64.toBytes(keyBase);
             byte[] ivBytes = null;
             if(ivBase != null && ivBase.length() > 0){
                 ivBytes = Base64.toBytes(ivBase);
             }
-            byte[] resultBytes = AESCBC.encrypt(inputBytes, keyBytes, ivBytes);
+            byte[] keyBytes = Base64.toBytes(keyBase);
+            byte[] resultBytes = AESCBC.encrypt(inputBytes, ivBytes, keyBytes);
             String resultBase = Base64.toString(resultBytes);
             promise.resolve(resultBase);
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class RNAES extends ReactContextBaseJavaModule {
             byte[] cipherBytes = Base64.toBytes(cipherBase);
             byte[] ivBytes = Base64.toBytes(ivBase);
             byte[] keyBytes = Base64.toBytes(keyBase);
-            byte[] plainBytes = AESCBC.decrypt(cipherBytes, keyBytes, ivBytes);
+            byte[] plainBytes = AESCBC.decrypt(cipherBytes, ivBytes, keyBytes);
             String plainBase = Base64.toString(plainBytes);
             promise.resolve(plainBase);
         } catch (Exception e) {

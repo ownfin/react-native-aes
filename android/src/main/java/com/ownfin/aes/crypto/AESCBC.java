@@ -14,7 +14,7 @@ public class AESCBC {
     private static final String KEY_ALGORITHM = "AES";
     private static final Integer IV_BYTE_COUNT = 16;
 
-    public static byte[] encrypt(byte[] inputBytes, byte[] keyBytes, byte[] ivBytes) throws Exception {
+    public static byte[] encrypt(byte[] inputBytes, byte[] ivBytes, byte[] keyBytes) throws Exception {
         if(ivBytes == null){
             ivBytes = CSPRNG.generate(IV_BYTE_COUNT);
         }
@@ -28,7 +28,7 @@ public class AESCBC {
         return outputBytes;
     }
 
-    public static byte[] decrypt(byte[] cipherBytes, byte[] keyBytes, byte[] ivBytes) throws Exception {
+    public static byte[] decrypt(byte[] cipherBytes, byte[] ivBytes, byte[] keyBytes) throws Exception {
         SecretKey secretKey = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
         IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);

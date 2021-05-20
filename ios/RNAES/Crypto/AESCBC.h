@@ -10,6 +10,6 @@
 #define IV_BYTE_COUNT 16
 
 @interface AESCBC : NSObject
-+ (NSData *) encrypt: (NSData *)inputBytes :(NSData *)keyBytes :(NSData *)ivBytes;
-+ (NSData *) decrypt: (NSData *)cipherBytes :(NSData *)keyBytes :(NSData *)ivBytes;
++ (NSData *) encrypt: (NSData *)inputBytes :(NSData *)ivBytes :(NSData *)keyBytes;
++ (NSData *) decrypt: (NSData *)cipherBytes :(NSData *)ivBytes :(NSData *)keyBytes;
 @end

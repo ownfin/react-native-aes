@@ -26,9 +26,9 @@ RCT_EXPORT_METHOD(aesEncrypt:(NSString *)inputBase :(NSString *)ivBase :(NSStrin
                   rejecter:(RCTPromiseRejectBlock)reject) {
     NSError *error = nil;
     NSData *inputBytes = [Base64 toBytes:inputBase];
-    NSData *keyBytes = [Base64 toBytes:keyBase];
     NSData *ivBytes = [Base64 toBytes:ivBase];
-    NSData *resultBytes = [AESCBC encrypt:inputBytes :keyBytes :ivBytes];
+    NSData *keyBytes = [Base64 toBytes:keyBase];
+    NSData *resultBytes = [AESCBC encrypt:inputBytes :ivBytes :keyBytes];
     if (resultBytes == nil) {
         reject(@"encrypt_fail", @"Encrypt error", error);
     } else {
@@ -42,9 +42,9 @@ RCT_EXPORT_METHOD(aesDecrypt:(NSString *)cipherBase :(NSString *)ivBase :(NSStri
                   rejecter:(RCTPromiseRejectBlock)reject) {
     NSError *error = nil;
     NSData *cipherBytes = [Base64 toBytes:cipherBase];
-    NSData *keyBytes = [Base64 toBytes:keyBase];
     NSData *ivBytes = [Base64 toBytes:ivBase];
-    NSData *plainBytes = [AESCBC decrypt:cipherBytes :keyBytes :ivBytes];
+    NSData *keyBytes = [Base64 toBytes:keyBase];
+    NSData *plainBytes = [AESCBC decrypt:cipherBytes :ivBytes :keyBytes];
     if (plainBytes == nil) {
         reject(@"decrypt_fail", @"Decrypt failed", error);
     } else {
