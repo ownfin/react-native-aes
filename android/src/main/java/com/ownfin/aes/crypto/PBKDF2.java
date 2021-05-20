@@ -17,7 +17,7 @@ public class PBKDF2 {
     {
         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA512Digest());
         gen.init(inputBytes, saltBytes, iterations);
-        byte[] keyBytes = ((KeyParameter) gen.generateDerivedParameters(byteCount)).getKey();
+        byte[] keyBytes = ((KeyParameter) gen.generateDerivedParameters(byteCount * 8)).getKey();
         return keyBytes;
     }
 

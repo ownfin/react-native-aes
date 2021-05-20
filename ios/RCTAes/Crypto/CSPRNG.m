@@ -10,9 +10,9 @@
 @implementation CSPRNG
 
 + (NSData *) generate: (NSInteger)byteCount {
-    NSMutableData *randomBytes = [NSMutableData dataWithLength:byteCount];
-    int resultCode = SecRandomCopyBytes(kSecRandomDefault, byteCount, randomBytes.mutableBytes);
-    if (resultCode != noErr) {
+    NSMutableData *randomBytes = [[NSMutableData alloc] initWithLength:byteCount];
+    int status = SecRandomCopyBytes(kSecRandomDefault, byteCount, randomBytes.mutableBytes);
+    if (status != noErr) {
         return nil;
     }
     return randomBytes;

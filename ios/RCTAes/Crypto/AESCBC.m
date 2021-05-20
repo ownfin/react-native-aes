@@ -13,23 +13,22 @@
 @implementation AESCBC
 
 + (NSData *) perform: (UInt32)operation :(NSData *)inputBytes :(NSData *)keyBytes :(NSData *)ivBytes {
-    size_t numBytes = 0;
-    NSMutableData * resultBytes = [[NSMutableData alloc] initWithLength:[inputBytes length] + kCCBlockSizeAES128];
-    CCCryptorStatus cryptStatus = CCCrypt(
-                                          operation,
-                                          kCCAlgorithmAES128,
-                                          kCCOptionPKCS7Padding,
-                                          keyBytes.bytes, kCCKeySizeAES256,
-                                          ivBytes.length ? ivBytes.bytes : nil,
-                                          inputBytes.bytes, inputBytes.length,
-                                          resultBytes.mutableBytes, resultBytes.length,
-                                          &numBytes);
-
-    if (cryptStatus == kCCSuccess) {
-        [resultBytes setLength:numBytes];
+    size_t outputByteCount = 0;
+    size_t bufferByteCount = [inputBytes length] + kCCBlockSizeAES128;
+    NSMutableData * resultBytes = [[NSMutableData alloc] initWithLength:bufferByteCount];
+    CCCryptorStatus status = CCCrypt(operation,
+                                     kCCAlgorithmAES128,
+                                     kCCOptionPKCS7Padding,
+                                     keyBytes.bytes, kCCKeySizeAES256,
+                                     ivBytes.length ? ivBytes.bytes : nil,
+                                     inputBytes.bytes, inputBytes.length,
+                                     resultBytes.mutableBytes, resultBytes.length,
+                                     &outputByteCount);
+    if (status == kCCSuccess) {
+        [resultBytes setLength:outputByteCount];
         return resultBytes;
     }
-    NSLog(@"AES error, %d", cryptStatus);
+    NSLog(@"AES error, %d", status);
     return nil;
 }
 

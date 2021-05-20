@@ -15,7 +15,7 @@ declare module 'react-native-aes-crypto' {
     inputBase: string,
     saltBase: string,
     iterations: number,
-    byteCount: number,
+    bitCount: number,
   ): Promise<string>
 
   function hmac256(
