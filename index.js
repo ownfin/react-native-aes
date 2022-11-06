@@ -1,2 +1,3 @@
-'use strict';
-import { NativeModules } from 'react-native';
+'use strict'
+import { NativeModules } from 'react-native'
+export default NativeModules.RNAES

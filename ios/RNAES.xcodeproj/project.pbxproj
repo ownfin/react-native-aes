@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32D980E11BE9F11C00FA27E5 /* RCTAes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32D980E01BE9F11C00FA27E5 /* RCTAes.h */; };
-		32D980E31BE9F11C00FA27E5 /* RCTAes.m in Sources */ = {isa = PBXBuildFile; fileRef = 32D980E21BE9F11C00FA27E5 /* RCTAes.m */; };
-		9BE20B5B1E4E1A3700696172 /* AesCrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE20B5A1E4E1A3700696172 /* AesCrypt.m */; };
+		03308F712656BF8C005DB325 /* HMAC.m in Sources */ = {isa = PBXBuildFile; fileRef = 03308F702656BF8C005DB325 /* HMAC.m */; };
+		03308F742656BFAA005DB325 /* PBKDF2.m in Sources */ = {isa = PBXBuildFile; fileRef = 03308F732656BFAA005DB325 /* PBKDF2.m */; };
+		03308F772656BFB4005DB325 /* SHA.m in Sources */ = {isa = PBXBuildFile; fileRef = 03308F762656BFB4005DB325 /* SHA.m */; };
+		03B35642265592000082918A /* CSPRNG.m in Sources */ = {isa = PBXBuildFile; fileRef = 03B3563F265592000082918A /* CSPRNG.m */; };
+		03B35643265592000082918A /* AESCBC.m in Sources */ = {isa = PBXBuildFile; fileRef = 03B35640265592000082918A /* AESCBC.m */; };
+		32D980E11BE9F11C00FA27E5 /* RNAES.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32D980E01BE9F11C00FA27E5 /* RNAES.h */; };
+		32D980E31BE9F11C00FA27E5 /* RNAES.m in Sources */ = {isa = PBXBuildFile; fileRef = 32D980E21BE9F11C00FA27E5 /* RNAES.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -19,18 +23,28 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				32D980E11BE9F11C00FA27E5 /* RCTAes.h in CopyFiles */,
+				32D980E11BE9F11C00FA27E5 /* RNAES.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32D980DD1BE9F11C00FA27E5 /* libRCTAes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTAes.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		32D980E01BE9F11C00FA27E5 /* RCTAes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTAes.h; sourceTree = "<group>"; };
-		32D980E21BE9F11C00FA27E5 /* RCTAes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTAes.m; sourceTree = "<group>"; };
-		9BE20B591E4E1A3700696172 /* AesCrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AesCrypt.h; sourceTree = "<group>"; };
-		9BE20B5A1E4E1A3700696172 /* AesCrypt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AesCrypt.m; sourceTree = "<group>"; };
+		03308F6F2656BF8C005DB325 /* HMAC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HMAC.h; sourceTree = "<group>"; };
+		03308F702656BF8C005DB325 /* HMAC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HMAC.m; sourceTree = "<group>"; };
+		03308F722656BFAA005DB325 /* PBKDF2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PBKDF2.h; sourceTree = "<group>"; };
+		03308F732656BFAA005DB325 /* PBKDF2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PBKDF2.m; sourceTree = "<group>"; };
+		03308F752656BFB4005DB325 /* SHA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA.h; sourceTree = "<group>"; };
+		03308F762656BFB4005DB325 /* SHA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SHA.m; sourceTree = "<group>"; };
+		03308F792656D4AF005DB325 /* Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		03308F7A2656D4AF005DB325 /* Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		03B3563E265592000082918A /* AESCBC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AESCBC.h; sourceTree = "<group>"; };
+		03B3563F265592000082918A /* CSPRNG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSPRNG.m; sourceTree = "<group>"; };
+		03B35640265592000082918A /* AESCBC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AESCBC.m; sourceTree = "<group>"; };
+		03B35641265592000082918A /* CSPRNG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSPRNG.h; sourceTree = "<group>"; };
+		32D980DD1BE9F11C00FA27E5 /* libRNAES.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNAES.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		32D980E01BE9F11C00FA27E5 /* RNAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNAES.h; sourceTree = "<group>"; };
+		32D980E21BE9F11C00FA27E5 /* RNAES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNAES.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,10 +58,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03308F782656D4AF005DB325 /* Encoding */ = {
+			isa = PBXGroup;
+			children = (
+				03308F792656D4AF005DB325 /* Base64.h */,
+				03308F7A2656D4AF005DB325 /* Base64.m */,
+			);
+			path = Encoding;
+			sourceTree = "<group>";
+		};
+		03B3563D265592000082918A /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				03B3563E265592000082918A /* AESCBC.h */,
+				03B35640265592000082918A /* AESCBC.m */,
+				03B35641265592000082918A /* CSPRNG.h */,
+				03B3563F265592000082918A /* CSPRNG.m */,
+				03308F6F2656BF8C005DB325 /* HMAC.h */,
+				03308F702656BF8C005DB325 /* HMAC.m */,
+				03308F722656BFAA005DB325 /* PBKDF2.h */,
+				03308F732656BFAA005DB325 /* PBKDF2.m */,
+				03308F752656BFB4005DB325 /* SHA.h */,
+				03308F762656BFB4005DB325 /* SHA.m */,
+			);
+			path = Crypto;
+			sourceTree = "<group>";
+		};
 		32D980D41BE9F11C00FA27E5 = {
 			isa = PBXGroup;
 			children = (
-				32D980DF1BE9F11C00FA27E5 /* RCTAes */,
+				32D980DF1BE9F11C00FA27E5 /* RNAES */,
 				32D980DE1BE9F11C00FA27E5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,36 +95,28 @@
 		32D980DE1BE9F11C00FA27E5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				32D980DD1BE9F11C00FA27E5 /* libRCTAes.a */,
+				32D980DD1BE9F11C00FA27E5 /* libRNAES.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		32D980DF1BE9F11C00FA27E5 /* RCTAes */ = {
+		32D980DF1BE9F11C00FA27E5 /* RNAES */ = {
 			isa = PBXGroup;
 			children = (
-				32D980E01BE9F11C00FA27E5 /* RCTAes.h */,
-				32D980E21BE9F11C00FA27E5 /* RCTAes.m */,
-				32D981161BE9F1B600FA27E5 /* lib */,
+				03308F782656D4AF005DB325 /* Encoding */,
+				03B3563D265592000082918A /* Crypto */,
+				32D980E01BE9F11C00FA27E5 /* RNAES.h */,
+				32D980E21BE9F11C00FA27E5 /* RNAES.m */,
 			);
-			path = RCTAes;
-			sourceTree = "<group>";
-		};
-		32D981161BE9F1B600FA27E5 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				9BE20B591E4E1A3700696172 /* AesCrypt.h */,
-				9BE20B5A1E4E1A3700696172 /* AesCrypt.m */,
-			);
-			path = lib;
+			path = RNAES;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		32D980DC1BE9F11C00FA27E5 /* RCTAes */ = {
+		32D980DC1BE9F11C00FA27E5 /* RNAES */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 32D980F11BE9F11C00FA27E5 /* Build configuration list for PBXNativeTarget "RCTAes" */;
+			buildConfigurationList = 32D980F11BE9F11C00FA27E5 /* Build configuration list for PBXNativeTarget "RNAES" */;
 			buildPhases = (
 				32D980D91BE9F11C00FA27E5 /* Sources */,
 				32D980DA1BE9F11C00FA27E5 /* Frameworks */,
@@ -94,9 +126,9 @@
 			);
 			dependencies = (
 			);
-			name = RCTAes;
+			name = RNAES;
 			productName = RCTAes;
-			productReference = 32D980DD1BE9F11C00FA27E5 /* libRCTAes.a */;
+			productReference = 32D980DD1BE9F11C00FA27E5 /* libRNAES.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -106,14 +138,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = tectiv3;
+				ORGANIZATIONNAME = ownfin;
 				TargetAttributes = {
 					32D980DC1BE9F11C00FA27E5 = {
 						CreatedOnToolsVersion = 6.4;
 					};
 				};
 			};
-			buildConfigurationList = 32D980D81BE9F11C00FA27E5 /* Build configuration list for PBXProject "RCTAes" */;
+			buildConfigurationList = 32D980D81BE9F11C00FA27E5 /* Build configuration list for PBXProject "RNAES" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -126,7 +158,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				32D980DC1BE9F11C00FA27E5 /* RCTAes */,
+				32D980DC1BE9F11C00FA27E5 /* RNAES */,
 			);
 		};
 /* End PBXProject section */
@@ -136,8 +168,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9BE20B5B1E4E1A3700696172 /* AesCrypt.m in Sources */,
-				32D980E31BE9F11C00FA27E5 /* RCTAes.m in Sources */,
+				03B35643265592000082918A /* AESCBC.m in Sources */,
+				03308F712656BF8C005DB325 /* HMAC.m in Sources */,
+				03B35642265592000082918A /* CSPRNG.m in Sources */,
+				03308F772656BFB4005DB325 /* SHA.m in Sources */,
+				32D980E31BE9F11C00FA27E5 /* RNAES.m in Sources */,
+				03308F742656BFAA005DB325 /* PBKDF2.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +316,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		32D980D81BE9F11C00FA27E5 /* Build configuration list for PBXProject "RCTAes" */ = {
+		32D980D81BE9F11C00FA27E5 /* Build configuration list for PBXProject "RNAES" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				32D980EF1BE9F11C00FA27E5 /* Debug */,
@@ -289,7 +325,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		32D980F11BE9F11C00FA27E5 /* Build configuration list for PBXNativeTarget "RCTAes" */ = {
+		32D980F11BE9F11C00FA27E5 /* Build configuration list for PBXNativeTarget "RNAES" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				32D980F21BE9F11C00FA27E5 /* Debug */,
