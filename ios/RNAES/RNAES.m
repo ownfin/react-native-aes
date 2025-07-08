@@ -10,12 +10,12 @@
 
 #import "RNAES.h"
 
-#import "AESCBC.h"
-#import "Base64.h"
-#import "CSPRNG.h"
-#import "HMAC.h"
-#import "PBKDF2.h"
-#import "SHA.h"
+#import "Crypto/AESCBC.h"
+#import "Crypto/CSPRNG.h"
+#import "Crypto/HMAC.h"
+#import "Crypto/PBKDF2.h"
+#import "Crypto/SHA.h"
+#import "Encoding/Base64.h"
 
 @implementation RNAES
 
